@@ -1,1 +1,1 @@
-This folder contains all the labs that I wrote for my AP Computer Science class.
+This folder contains all the labs that I wrote for my AP Computer Science class. Some code, like testers, was written by my teacher, and his contributions are noted.
