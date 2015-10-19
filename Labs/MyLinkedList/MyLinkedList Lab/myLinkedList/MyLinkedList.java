@@ -1,0 +1,285 @@
+package myLinkedList;
+import java.util.Iterator;
+/*
+ * This class implements a doubly linked list. This consists of many nodes
+ *  with pointers to the previous node as well as the next node; because 
+ *  there are two pointers from a node to another, it is referred to as 
+ *  doubly linked. This is useful if you want to traverse a list from the 
+ *  first to the last element, or in the opposite direction too, something 
+ *  that is impossible with a singly linked list. A MyLinkedList object 
+ *  can store data that must be attached to/hold references to another 
+ *  data element, especially if the elements need to be kept in a 
+ *  specific order. Methods in this class enable the end user to find the 
+ *  size of a MyLinkedList object, append an object to the end of a 
+ *  linked list, add an object at a particular index, get an object
+ *  at a particular index, set an object to a particular value, and remove
+ *  a value, given a particular index.
+ *  @author Rahul Jayaraman
+ *  @version 110613
+ */
+
+public class MyLinkedList<E> implements MyList<E> //class declaration with interface
+{
+	private int myLinkedListSize; //instance variable for the size of the linked list
+	private DoubleNode first; //pointer to the first DoubleNode of the list
+	private DoubleNode last; //pointer to the last DoubleNode of the list
+	
+	/**
+	 * Constructor without any arguments for a MyLinkedList() object. It sets all the 
+	 * instance variables to their default state - null or 0. 
+	 * @post - creates a MyLinkedList object and sets the first, last to null and the size 
+	 * to 0; these can be modified through use of the following methods. 
+	 */
+	public MyLinkedList()
+	{
+		first = null; //sets the first instance variable to null
+		last = null; //sets the last instance variable to null
+		myLinkedListSize = 0; //nothing's in the list as of now
+	} //close default constructor
+	
+	/**
+	 * This method returns the size of a MyLinkedList object, stored in the 
+	 * myLinkedListSize state variable, changed whenever we add a method. 
+	 * @return the size of the linked list
+	 */
+	public int size() 
+	{
+		return myLinkedListSize; //returns the instance variable associated with the object
+	} //close size() method
+	
+	/**
+	 * This toString() method is inherited from the superclass Object; it is used
+	 * in the tester to compare the desired linked list to the linked list that this 
+	 * code produces. It takes all of the values of a linked list and returns them
+	 * in what visually appears to be an array, but is just a series of concatenated 
+	 * strings - this is accomplished through the use of a for loop.
+	 * @return the linked list turned into a string that looks like an array
+	 */
+	public String toString()
+	{
+		if (myLinkedListSize == 0) //if there's nothing in the list
+            return "[]"; //return an empty "array"
+		
+        String s = "["; //start the storage array
+        for (int i = 0; i < myLinkedListSize-1; i++)
+        	s+= traverseFromFront(i,first).getValue() + ", "; //get each of the values in the list
+        return s + last.getValue() +"]"; //add the last value and close the "array"
+	} //close toString() method
+
+	/**
+	 * This helper method will traverse a linked list and return the DoubleNode
+	 * at the index that the user inputs. It is used in many of the following methods,
+	 * and uses recursion to traverse the list. 
+	 * @param index the location of the DoubleNode which the user desires
+	 * @param list the list that is to be traversed
+	 * @return the DoubleNode associated with that index
+	 * @throws IndexOutOfBoundsException() if the index is negative or greater than 
+	 * the size of the list (that is, greater than the myLinkedListSize instance variable). 
+	 */
+	private DoubleNode traverseFromFront(int index, DoubleNode list)
+	{
+		if (index < 0 || index > myLinkedListSize) //check if an exception needs to be thrown
+			throw new IndexOutOfBoundsException(); //actually throw the exception
+		
+		if (index == 0) return first; //base case
+		
+		else
+			for (int i = 0; i < index; i++) //traverse the list
+				list = list.getNext(); //reassign the pointer list each time the loop is invoked
+			return list; //return whatever list points to
+			
+	} //close traversal method
+	
+	/**
+	 * This method appends a value/object to the end of a given LinkedList. This simply 
+	 * uses the setNext() method to create a new ListNode with the desired value; it then 
+	 * reassigns the pointer last to this new ListNode and sets the previous pointer to 
+	 * the ListNode that was previously last using the setPrev method, running in O(1) time.
+	 * @param the object to be appended to the end of the list in a new DoubleNode
+	 * @return true - appending is always successful, no matter what the list's size 
+	 * @post the array is now one greater in length b/c of the new DoubleNode 
+	 */
+	public boolean add(E obj) 
+	{
+		if (myLinkedListSize == 0) //if the list is currently empty
+		{
+			first = new DoubleNode(obj); //create a new DoubleNode with the object
+			last = first; //set the first and last pointers to point to the same thing
+		} //close if statement
+		
+		else //if the list is NOT empty
+		{
+			DoubleNode temp = new DoubleNode(obj); //create a DoubleNode that will go last
+			temp.setPrevious(last); //make the previous pointer point to the current last
+			last.setNext(temp); //set the current last's next to the temp DoubleNode
+			last = temp; //now, the temp DoubleNode is the actual last object in the list
+		} //close else statement
+		
+		myLinkedListSize++; //increase the size by 1, as 1 element was added
+		return true; //appending was a success!
+	} //close boolean add()
+
+	/**
+	 * This method will add an object at the desired index and then shift all the objects 
+	 * to its right one index down. We will traverse the linked list and perform this 
+	 * action through a series of pointer assignments. If the object is further down the 
+	 * linked list, it will take a longer time, making it run in O(n). 
+	 * @param index where we want to add the object
+	 * @param obj the object that is to be added at the specific index
+	 * @throws IndexOutOfBoundsException if the index is negative or greater than the size
+	 * @post the array now has one new element at location index
+	 */
+	public void add (int index, E obj)
+    {
+		if (index < 0 || index > myLinkedListSize) //check if an exception needs to be thrown
+			throw new IndexOutOfBoundsException(); //actually throw the exception
+        
+		DoubleNode toBeMoved = traverseFromFront(index,first); //store the current DoubleNode at the
+		//index in a variable toBeMoved, which will be called later
+			
+        if (myLinkedListSize == 0) //simplest case - an empty list!
+        {
+            first = new DoubleNode(obj); //set the first to the new DoubleNode
+            last = first; //the last element is the same too
+        } //close the if statement
+        
+        else //what if there are actually elements in the list
+        	if (index == 0) //next simplest case - add to the beginning of the list
+        	{
+        	    DoubleNode newNode = new DoubleNode(obj); //create a new DoubleNode to be inserted
+        		DoubleNode temp = first; //the current DoubleNode
+        		//at index is stored in a temp variable, will be used later
+        		newNode.setNext(temp); //set the next pointer of the new node to the first value
+        		temp.setPrevious(newNode); //set the previous pointer of temp to the new node
+        		first = newNode; //the node that has been created is now first in the list
+        		newNode.setPrevious(null);//now newNode is first in the list!
+        	} //close if statement
+        
+        	else //other cases
+        		if (index == myLinkedListSize) //next simplest, adding at the end
+        		{
+        			add(obj); //this is the same as appending, so we call the method
+        		} //close if statement
+        
+        		else //finally the generic case
+        		{
+        		    DoubleNode newNode = new DoubleNode(obj); //create a new node that will be inserted
+        			newNode.setNext(toBeMoved); //push the index currently there one down
+        			newNode.setPrevious(toBeMoved.getPrevious()); //set the previous to the newNode's previous
+        			toBeMoved.setPrevious(newNode); //shift the pointer to the newNode
+        			newNode.getPrevious().setNext(newNode); //set something to point to the newNode
+        		} //close else statement
+        
+        myLinkedListSize++; //increment the size of the linked list
+        
+    } //close void add()
+    
+
+	/**
+	 * This method gets the desired value at a specified index. Once again, we must 
+	 * traverse the linked list in order to get to this index. We can then just use the 
+	 * getValue() method to get this value.  Runs in O(n) time. 
+	 * @param index is the location of the object that we want to get
+	 * @return the object that is stored at index
+	 * @throws IndexOutOfBoundsException() if the index is negative or greater than size
+	 */
+	public E get(int index) 
+	{
+		if (index < 0 || index > myLinkedListSize) //check if an exception needs to be thrown
+			throw new IndexOutOfBoundsException(); //actually throw the exception
+		if (index == 0) //simplify the problem rather than traverse the list
+			return (E) first.getValue(); //return the first value 
+		else
+			if (index == myLinkedListSize-1) //simplify the problem vs traversal
+				return (E) last.getValue(); //return the last value
+			else
+				return (E) traverseFromFront(index,first).getValue(); //traverse the list, and get the
+		//value stored at the node at the desired index
+	} //close get()
+
+	/**
+	 * This method changes the value of a given index to the value that is input into the 
+	 * argument. Once again, we must traverse the linked list and then use the set method 
+	 * once we reach the desired index, using the .setValue() method.  Runs in O(n) time.
+	 * @param index is the index that we want to change to the new object
+	 * @param obj is the replacement thing to put in the DoubleNode
+	 * @return what was previously stored at the index specified 
+	 * @throws IndexOutOfBoundsException() if index is negative or greater than size
+	 */
+	public E set(int index, E obj) 
+	{
+		if (index < 0 || index > myLinkedListSize) //check if an exception needs to be thrown
+			throw new IndexOutOfBoundsException(); //throw the exception
+		
+		E temp = (E) traverseFromFront(index,first).getValue(); //get the value stored at 
+		//index by traversing the list to get to that particular index
+		traverseFromFront(index,first).setValue(obj); //traverse yet again and set the
+		//value equal to the new value specified in the parameter
+		return temp; //return what was previously there at the index
+	} //close set()
+
+	/**
+	 * This removes the value at a given index and shifts all the values after that back 
+	 * one. What we can do is just a little bit of pointer reassignment at the index. Runs 
+	 * in O(n) time, as we must traverse the list.
+	 * @param index the location of the object that we want removed
+	 * @return the object that was previously stored at index
+	 * @throws IndexOutOfBoundsException() if index is negative or greater than size
+	 */
+	public E remove(int index) 
+	{
+		if (index < 0 || index > myLinkedListSize) //check if an exception needs to be thrown
+			throw new IndexOutOfBoundsException(); //actually throw the exception
+		
+		DoubleNode toBeRemoved = traverseFromFront(index,first); //find the node to be removed
+		E value = (E) toBeRemoved.getValue(); //set a variable value to whatever is stored in that node
+		
+		if (index == 0) //first case - remove from the head of the list
+		{
+			if (myLinkedListSize == 1) //if there's only one element in the list
+			{
+				first = null; //no need for pointers, the list is empty
+				last = null; //no need for a last pointer, the list is empty
+			} //close if statement
+			else
+			{
+				first.getNext().setPrevious(null); //set the previous of first's next to null
+				first = first.getNext(); //first now points to the next thing
+			} //close else
+		} //close first if statement
+		
+		else // what if index isn't 0?
+			if (index == myLinkedListSize-1) //remove from the end of the list
+			{
+				toBeRemoved.getPrevious().setNext(null); //nothing points to the last element
+				last = toBeRemoved.getPrevious(); //last is now whatever came before what was 
+				//supposed to be removed from the list
+			}
+			else //general case
+			{
+				toBeRemoved.getPrevious().setNext(toBeRemoved.getNext()); //set the next
+				toBeRemoved.getNext().setPrevious(toBeRemoved.getPrevious()); //set the previous
+			} //close else
+		myLinkedListSize--; //increment size down by 1
+		return value; //return whatever was stored there
+	}
+
+	/**
+	 * Iterator will be developed in a later lab.
+	 * @return null
+	 */
+	public Iterator<E> iterator() 
+	{
+		return null;
+	} //close iterator
+
+	/**
+	 * MyListIterator will be developed in a later lab.
+	 * @return null
+	 */
+	public MyListIterator<E> listIterator() 
+	{
+		return null;
+	} //close listIterator
+	
+} //close MyLinkedList Class

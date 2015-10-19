@@ -1,0 +1,217 @@
+//The first class defined is the definition for a ListNode - in this class you can get
+//a value of a ListNode or the next ListNode's value, or set a given ListNode's value or 
+//its next ListNode's value. 
+//@Rahul Jayaraman
+//version 100313
+
+public class ListNode // class definition of a linked list
+{
+     private value; //instance variable defining the value in a certain ListNode
+     private next; // instance variable defining the next value of a certain ListNode
+     
+     //This is the constructor for a ListNode object - it makes the object with two 
+     //instance variables: value and next. 
+     //@param - initValue - this is the value that will be stored in the ListNode
+     //@param - initNext - this is the value that is in the next ListNode after this one
+     //@return - a ListNode with value initValue pointing to another ListNode with value 
+     //initNext; the next ListNode will do the same thing, until initNext is null
+     public ListNode(initValue, initNext)
+     { 
+        value = initValue; // sets the parameter initValue to the instance variable value
+        next = initNext; // sets the parameter initNext to the instance variable next
+     } //close constructor
+      
+     //This method returns the value of a given ListNode.
+     //@param - none
+     //@return - the value stored in the ListNode
+     public getValue() 
+     { 
+     	return value;
+     } //close getValue()
+     
+     //This method returns the next series of ListNodes until the one whose next = null. 
+     //@param - none
+     //@return - a pointer to the series of all the ListNodes until the last one (after 
+     //the one that the method is being called upon 
+     public getNext() 
+     { 
+     	return next;
+     } //close getNext()
+     
+     //This method sets the value of a ListNode to a certain number. 
+     //@param - theNewValue - this is the new value that will be in the ListNode
+     //@return - none (it just sets a value; it doesn't return anything) 
+     public setValue(theNewValue) 
+     { 
+     	value = theNewValue; 
+     } //close setValue(theNewValue)
+     
+     //This method sets the next of a given ListNode - it puts more ListNodes in the 
+     //next instance variable (it sets them as the new next)
+     //@param - theNewNext - this is another ListNode; the method will reassign the 
+     //pointer to this ListNode from the ListNode that the method is being called from
+     //@return - none (it just sets a value; it doesn't return anything)
+     public setNext(theNewNext) 
+     { 
+     	next = theNewNext; 
+     } //close setNext(theNewNext)
+} //close ListNode class definition
+
+//The following class ListUtil performs certain actions on a linked list: it gets its size, 
+//returns a value at a specified index, appends a value at the end, removes all 
+//occurrences of a given value, and reverses a linked list. 
+//@Rahul Jayaraman
+//version 100313
+
+public class ListUtil //class definition
+{
+	//This method returns the amount of ListNodes there are in a given linked list.
+	//@param - ListNode - it takes in the ListNode that it has to count.
+	//@return - it returns a number saying how many ListNodes there are in the linked list
+	public size(ListNode)
+	{
+		if (ListNode.getNext() == null) // base case - the node doesn't point anywhere
+			return 1; // there is only one ListNode
+		else 
+			return 1 + this.size(ListNode.getNext()); //recursive call to proceed down 
+			//the linked list (using the command getNext())
+	} //close the size(ListNode) method
+	
+	//This method gets the value stored in a specific ListNode in a linked list
+	//given a particular index (where the index starts at 0).
+	//@param - ListNode - the list that we are traversing to find the value
+	//@param - index - the index whose value we want; indices start at 0
+	//@return - a value stored in that particular ListNode
+	//pre - index must be 0 or greater than 0; it cannot be negative
+	public get(ListNode, index) 
+	{
+		if (ListNode.getNext()==null || index==0) // base case 
+			return ListNode.getValue();
+		else
+			return this.get(ListNode.getNext(),index-1); //recursive call to go to 
+			//the next ListNode and calculate the index from that (one less than input)
+	} //closes the get(ListNode, index) method
+	
+	//This method makes a list given an expression to store in each ListNode as well
+	//as the number of ListNodes to make (common sense says that this should be positive)
+	//@param - num - this number is the number of ListNodes that this method will create
+	//@param - expr - this is the expression that will be stored in each ListNode
+	//@return - a linked list with (num) of ListNodes, each having value expr
+	//pre - num must be positive (this is taken care of in the method, though)
+	public makeList(num, expr)
+	{
+		if (num > 0) //make sure that the ListNode can be made; logic dictates that
+			//there cannot be -1 ListNodes; if 0 is input, it won't return anything, 
+			//because 0 ListNodes is actually nothing, so it doesn't create anything. 
+			return new ListNode(expr,this.makeList(num-1,expr)); //recursive call
+	} //close makeList(num, expr) method
+	
+	//This method appends a new ListNode with value (value) to the end of any input list
+	//and sets the next value of the previous last ListNode to the new one.
+	//@param - ListNode - this is the linked list on which the ListNode is appended.
+	//@param - value - this is the value that will be stored in the new ListNode
+	//@return - a new ListNode that is part of the original linked list
+	public add(ListNode, value)
+	{
+		if (ListNode.getNext()==null) //base case
+			return ListNode.setNext(new ListNode(value,null)); //appends the new ListNode
+		else
+			return this.add(ListNode.getNext(),value); //recursive call
+	} //close the add(ListNode, value) method
+	
+	//This method removes all instances of a given value from a given linked list.
+	//@param - ListNode - this is the ListNode from which the values need to be removed.
+	//@param - value - this is the value that we want removed from the linked list
+	//@return - it returns the same list with those values removed 
+	public remove(ListNode, value)
+	{
+		if (ListNode==null) //base case
+			return ListNode; //returns the same list
+		else
+			if (ListNode.getValue()==value) //second base case (desired value)
+				return this.remove(ListNode.getNext(),value);
+			else
+				ListNode.setNext(this.remove(ListNode.getNext(),value)); //recursive call
+				return ListNode; //the same list that was input or changed based on the
+				//characteristics of the ListNode.getNext()
+	} //close remove(ListNode, value) method
+	
+	//This method reverses a linked list and returns a pointer to the head of the
+	//reversed list, that is the last element of the previous list.
+	//@param - ListNode - the linked list that is to be reversed
+	//@return - a linked list with all the values reversed
+	public reverse(ListNode)
+	{
+		if (ListNode==null || this.size(ListNode)==1) //base case; it'll return ListNode
+			return ListNode;
+		else
+			temp = this.reverse(ListNode.getNext()); //recursive call for the next part
+			ListNode.getNext().setNext(ListNode);
+			ListNode.setNext(null); //the very last one sets next to null
+			return temp; //returns the reversed list
+	} //close the reverse(ListNode) method
+	
+} //close the ListUtil class
+
+//The below class, Memorizer, takes in a value and stores it; it then returns a value of 
+//false. However, if the same value is inputted another time,  Memorizer returns true;
+//this is a result of using the only method in Memorizer - seen. 
+//@Rahul Jayaraman
+//version 100313
+
+public class Memorizer //class definition of a memorizer
+{
+	private listvar; //instance field listvar that is a pointer to a linked list
+	
+	//This constructor makes a new Memorizer object and sets instance variable listvar to
+	//null.
+	//@param - none
+	//@return - a new Memorizer with instance variable listvar set to null
+	public Memorizer()
+	{
+		listvar = null; //listvar initially points to null
+	}
+	
+	//This method tests if a Memorizer object has "seen" a particular value; i.e. if
+	//it has recorded it in a ListNode that it created previously. 
+	//@param - value - this is the value that we are testing if the Memorizer has seen
+	//@return - a boolean (true or false, but JavaTown doesn't care) that indicates
+	//whether the Memorizer has seen the object or not
+	public seen(value)
+	{
+		if (this.seenHelper(listvar,value)) //base case, recursion in helper
+			//invokes the helper method if it returns true or else it moves on
+			return true;
+		else
+			if (listvar == null) //useful for a new Memorizer object
+				listvar = new ListNode(value,null); //creates a new ListNode storing that
+				//value that you have input as a method parameter
+			else
+				listvar = new ListNode(value,listvar); //just adding the value to the 
+				//previous list; it works even if it is null
+			return false; //it hasn't "seen" it previously
+	} //close seen(value) method
+	
+	//This helper method determines whether a Memorizer has "seen" a value.
+	//@param - listvar - this is the list in which we are checking if the value is
+	//@param - value - the value that we want to check if the memorizer has "seen"
+	//@return - a boolean determining whether the Memorizer has "seen" the value
+	//or not, however, this boolean is the first if statement in the actual method
+	private seenHelper(listvar, value)
+	{
+		if (listvar!=null) //base case
+		{
+			if (listvar.getValue()==value) //secondary base case
+				return true;
+			else
+				return this.seenHelper(listvar.getNext(),value); //recursive call
+		}
+		else
+			return false; //if listvar = null return false
+	} //close seenHelper(listvar, value) method
+	
+}//close Memorizer class
+
+samplelist = new ListNode(2, new ListNode(3, new ListNode(3, null)));
+util1 = new ListUtil();
+a = new Memorizer();		

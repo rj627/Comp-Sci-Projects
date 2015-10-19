@@ -1,0 +1,25 @@
+/*
+ * This class encloses the main method, where a heap implementation will be tested. In today's portion,
+ * we created an array of 12 integers and added random values to the last 11 indices and then displayed
+ * it in the form of a binary tree with 11 nodes. 
+ */
+public class HeapMain 
+{
+
+	/**
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) 
+	{
+		Integer[] intArray = new Integer[12];
+		for (int i = 1; i < 12; i++)
+		{
+			intArray[i] = (int) (Math.random() * 100);
+			System.out.println(intArray[i]);
+		}
+		HeapDisplay disp = new HeapDisplay();
+		disp.displayHeap(intArray, 11);
+	}
+
+}

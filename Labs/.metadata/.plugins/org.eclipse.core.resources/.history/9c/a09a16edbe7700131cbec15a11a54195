@@ -1,0 +1,8 @@
+import info.gridworld.grid.*;
+import java.util.ArrayList;
+
+public class Tetris 
+{
+	private MyBoundedGrid<Block> currentGrid;
+	
+}

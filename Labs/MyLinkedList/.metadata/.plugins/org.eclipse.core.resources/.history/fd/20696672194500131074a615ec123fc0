@@ -1,0 +1,218 @@
+package myLinkedList;
+import java.util.Iterator;
+
+public class MyLinkedList<E> implements MyList<E>, MyListIterator<E> 
+{
+	private DoubleNode first;
+	private DoubleNode last;
+	private int myLinkedListSize;
+
+	public MyLinkedList()
+	{
+		myLinkedListSize = 0;
+		first = null;
+		last = null;
+		
+	}
+	
+	public MyLinkedList(Object obj)
+	{
+		first = new DoubleNode(obj);
+		last = first;
+		myLinkedListSize = 1;
+	}
+	
+	public String toString()
+	{
+	if (myLinkedListSize == 0)
+		return "[]";
+	
+	String s = "[";
+	
+	for (int i = 0; i < myLinkedListSize - 1; i++)
+	{
+		s += first.getValue() + ", ";
+	}
+	
+	return s + last.getValue() + "]";
+	}
+	
+	private DoubleNode traverseFromFront(int index, DoubleNode list)
+	{
+		if (index > myLinkedListSize || index < 0)
+			throw new IndexOutOfBoundsException();
+		else
+			for (int i = 0; i <= index; i++)
+			{
+				list = list.getNext();
+			}
+			return list;
+			
+	}
+	
+	
+	/**
+	 * This method returns the size of a MyLinkedList object, stored
+	 * in the myLinkedListSize state variable, changed whenever we 
+	 * add an element or a DoubleNode through the use of increment 
+	 * operators. This method runs in O(1) time because it just 
+	 * returns an instance variable and does not require much "work."
+	 * @param none
+	 * @return the size of the linked list (in an instance variable)
+	 */
+	public int size() 
+	{
+		return myLinkedListSize;
+	}
+
+	/**
+	 * This method appends a value/object to the end of a given 
+	 * LinkedList. This simply uses the setNext() method to create 
+	 * a new ListNode with the desired value; it then reassigns 
+	 * the pointer last to this new ListNode and sets the previous 
+	 * pointer to the ListNode that was previously last using the 
+	 * setPrev method, and the method runs in O(1).  
+	 * @param obj the object that is stored in the added node
+	 * @return true always (add will always be successful) 
+	 * @post an object has been appended to the end; size is now +1
+	 */
+	public boolean add(E obj) 
+	{
+		if (myLinkedListSize == 0)
+		{
+			first = new DoubleNode(obj);
+			last = first;
+		}
+		else
+		{
+			DoubleNode temp = new DoubleNode(obj,last,null);
+			last.setNext(temp);
+			last = last.getNext();
+		}
+		myLinkedListSize++;
+		return true;
+	}
+
+	
+	@Override
+	public void add(int index, E obj) 
+	{
+		if (index == 0)
+		{
+			DoubleNode node = new DoubleNode(obj);
+			node.setNext(first);
+			first = node;
+		}
+		else
+		{
+			traverseFromFront(index,first);
+			DoubleNode inserted = new DoubleNode(obj);
+			inserted.setNext(first);
+			inserted.setPrevious(first.getPrevious());
+			first.getPrevious().setNext(inserted);
+			first.setPrevious(inserted);
+		}
+	}
+
+	@Override
+	public E get(int index) 
+	{
+		if (index == 0) return (E) first.getValue();
+		else 
+			first = first.getNext();
+			return get(index-1);
+	}
+
+	@Override
+	public E set(int index, E obj) 
+	{
+		if (index >= myLinkedListSize || index < 0)
+			throw new IndexOutOfBoundsException();
+		else
+			if (index == 0)
+			{
+				E temp = (E) first.getNext().getValue();
+				DoubleNode tempNode = new DoubleNode(obj,null,first.getNext());
+				first.setPrevious(tempNode);
+				first = tempNode;
+				return (E) temp;
+			}
+			else
+			{
+				traverseFromFront(index,first);
+				E temp = (E) first.getValue();first.setValue(obj);
+				return temp;
+			}
+	}
+
+	@Override
+	public E remove(int index) 
+	{
+		if (index < 0 || index > myLinkedListSize)
+			throw new IndexOutOfBoundsException();
+		
+		if (index == 0)
+		{
+			DoubleNode previousNode = first;
+			first = traverseFromFront(1, first);
+			myLinkedListSize--;
+			return (E) previousNode.getValue();
+		}
+		
+		else
+			if (index == myLinkedListSize-1)
+			{
+				DoubleNode previousNode = last;
+				last = traverseFromFront(myLinkedListSize-1,first);
+				myLinkedListSize--;
+				return (E) previousNode.getValue();
+			}
+			else
+			{
+				DoubleNode previousNode = traverseFromFront(index,first);
+				traverseFromFront(index,first).getPrevious().setNext(traverseFromFront(index+1,first));
+				myLinkedListSize--;
+				return (E) previousNode.getValue();
+			}
+		
+	}
+
+	@Override
+	public Iterator<E> iterator() 
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public MyListIterator<E> listIterator() 
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean hasNext() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public E next() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void remove() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void set(E obj) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

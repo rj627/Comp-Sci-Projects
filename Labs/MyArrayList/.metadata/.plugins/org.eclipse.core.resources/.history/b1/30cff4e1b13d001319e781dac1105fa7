@@ -1,0 +1,206 @@
+package myArrayList;
+
+import java.util.Iterator;
+
+/* This class provides for the implementation of a smart array - the 
+ * class's methods can get the size of the smart array, append an 
+ * object to the smart array, add an object to the smart array at 
+ * an index, get an object given an index, set an object at a particular
+ * index to be a different value, and remove an object given a specific
+ * index. The iterator() and listIterator() methods return null; they
+ * will be developed in a future lab. 
+ * @author Rahul Jayaraman
+ * @version 102213
+ */
+
+public class MyArrayList<E> implements MyList<E>, MyListIterator<E> //class definition
+{
+	private Object[] myArray; //instance array storing the values
+	public int myArraySize;
+	
+	/**
+	 * Constructor for myArrayList, not given an initial capacity. 
+	 * The constructor is overloaded - there is another constructor,
+	 * but with different parameters. 
+	 * @param none
+	 * @return none
+	 * <dt><b>Precondition:</b><dd> none
+	 * <dt><b>Postcondition:</b><dd> sets the myArray instance field to a new array of nulls
+	 */
+	
+	public MyArrayList() 
+	{
+		myArray = new Object[10];
+		myArraySize = 0;
+	}
+	
+	/**
+	 * Constructor for the myArrayList, given an initial capacity. This
+	 * is an example of overloading constructors - we have multiple
+	 * constructors that can take multiple arguments (or none at all). 
+	 * @param capacity - the desired number of elements to be stored 
+	 * @return none
+	 * <dt><b>Precondition:</b><dd> capacity cannot be negative or 0
+	 * <dt><b>Postcondition:</b><dd> sets the myArray instance field to a new array of nulls.
+	 */
+	
+	public MyArrayList(int capacity)
+	{
+		if (capacity < 0)
+				throw new IllegalArgumentException ("Capacity cannot be negative");
+		
+		myArray = new Object[capacity];
+		myArraySize = 0; 
+	}
+
+	/**
+	 * This method is an implementation of the toString() method that is found in the 
+	 * superclass Object, which all objects inherit from. 
+	 * @param none
+	 * @return the array as a string
+	 * <dt><b>Postcondition:</b><dd> the array is now converted into a string
+	 */
+	public String toString()
+	{
+		if (myArraySize==0)
+			return "[]";
+		
+		String s = "[";
+		
+		for (int i = 0; i < myArraySize-1; i++)
+		{
+			s = s + myArray[i]+",";	
+		}
+		
+		return s+myArray[myArraySize-1]+"]";
+	}
+	
+	/**
+	 * This method returns the size of the smart array; i.e. how many elements are contained in 
+	 * the array. The default value is 10; however, there may be more if the add() method has
+	 * been called. 
+	 * @Override the method size() from MyList interface
+	 * @param none
+	 * @return the size of the array
+	 */
+	public int size() {
+		return myArraySize;
+	}
+	
+	@Override
+	/**
+	 * This method appends a value/object to the end of a given instance array. 
+	 * This will run in O(1) time on average because once the array is full, 
+	 * it will double the size of the array. Therefore, for future uses of the add() 
+	 * method, it will run in O(1) time as it is a simple usage of the assignment operator. 
+	 */
+	public boolean add(E obj) 
+	{
+		System.out.println("Adding: " + obj);
+		if (myArraySize == myArray.length)
+		{
+			doubleSize();
+			myArray[myArraySize]=obj;
+		}
+		else {
+			System.out.println("Doing to add to: " + myArraySize);
+			myArray[myArraySize]=obj;
+			System.out.println(myArray.toString());
+		}
+		return true;
+			
+	}
+
+	private void doubleSize()
+	{
+		System.out.println("Doubling Size");
+		Object[] newArray = new Object[2*myArraySize];
+		for (int i = 0; i < myArraySize; i++)
+		{
+			newArray[i]=myArray[i];
+		}
+		myArray = newArray;
+	}
+	@Override
+	public void add(int index, E obj) {
+		if (index <0)
+				throw new ArrayIndexOutOfBoundsException();
+		
+		if (myArraySize==10)
+		{
+			Object[] newArray2;
+			newArray2= new Object[2*myArraySize];
+			
+			for (int i = 0; i < index; i++)
+			{
+				newArray2[i]=myArray[i];
+			}
+			myArray[index]=obj; 
+			
+			for (int i = myArraySize; i > index; i--)
+			{
+				newArray2[i+1]=myArray[i];
+			}
+		} 
+		
+		myArray[index]=obj;
+		myArraySize++;
+			
+	}
+
+	@Override
+	public E get(int index) {
+		if (index <0 || index >= myArraySize)
+			throw new ArrayIndexOutOfBoundsException();
+		
+		return (E) myArray[index];
+	}
+
+	@Override
+	public E set(int index, E obj) {
+		if (index < 0 || index >= myArraySize)
+			throw new ArrayIndexOutOfBoundsException();
+		
+		Object temp = myArray[index];
+		myArray[index]= obj;
+		return (E) temp;
+	}
+
+	/**
+	 * This method removes an object from a given index and slides everything back an index
+	 * through the use of a for loop. We must cast the return to E because we do not 
+	 * know what type is stored in the ArrayList. 
+	 * @param index - this is the index that we want to remove the object from
+	 * @return This will return the object that was at index <i>index</i>; it must
+	 * be casted to E, as noted previously.
+	 * <dt><b>Precondition:</b><dd> - index cannot be negative nor greater than myArraySize
+	 * <dt><b>Postcondition:</b><dd> - the smart array will now be devoid of that object
+	 * that used to be stored at that particular index. 
+	 */
+	
+	public E remove(int index) {
+		if (index < 0 || index >= myArraySize)
+			throw new IllegalArgumentException("Index cannot be negative or greater than the array size.");
+		
+		Object temp = myArray[index]; //setting a temporary variable to store the value 
+		//present at that location before this code runs
+		myArray[index]=null; //setting the pointer to null
+		for (int i = index ;i <= myArraySize-1; i++) //
+		{
+			myArray[i]=myArray[i+1];
+		}
+		return (E) temp;
+		
+	}
+
+	@Override
+	public Iterator<E> iterator() {
+		return null;
+	}
+
+	@Override
+	public MyListIterator<E> listIterator() {
+		return null;
+	}
+	
+}

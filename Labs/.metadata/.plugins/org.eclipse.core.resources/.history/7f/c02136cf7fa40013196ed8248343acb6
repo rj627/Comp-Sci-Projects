@@ -1,0 +1,85 @@
+import java.util.*;
+
+/*
+ * Write class comments here in accordance with the style guide
+ * @author
+ * @version
+ * 
+ */
+
+public abstract class BSTUtilities
+{
+	/**
+	 * comment completely
+	 */
+    public static boolean contains(TreeNode t, Comparable x, TreeDisplay display)
+    {
+    	if (t == null) return false;
+    	
+    	if (t.getValue().equals(x)) 
+    	{
+    		display.visit(t);
+    		return true;
+    	}
+    		
+    	if (x.compareTo(t.getValue()) < 0) 
+    	{
+    		display.visit(t.getLeft());
+    		return contains(t.getLeft(), x, display);
+    	}
+    	
+    	if (x.compareTo(t.getValue()) > 0) 
+    	{
+    		display.visit(t.getRight());
+    		return contains(t.getRight(), x, display);
+    	}
+    	
+    	return false;
+    }
+    /**
+	 * comment completely
+     */
+    public static TreeNode insert(TreeNode t, Comparable x, TreeDisplay display)
+    {
+    	if (!contains(t, x, display))
+    	{
+    		if (t == null) 
+    			return new TreeNode(x);
+        
+    		else if (x.compareTo(t.getValue()) > 0) 
+    			return insert(t.getRight(), x, display);
+        
+    		else if (x.compareTo(t.getValue()) < 0) 
+    			return insert(t.getLeft(),x, display);
+    	}
+       
+    	return t;
+    }
+    /**
+	 * comment completely
+     */
+    private static TreeNode deleteNode(TreeNode t, TreeDisplay display)
+    {
+       throw new RuntimeException("write me");
+    }
+    
+    /**
+ 	 * comment completely
+     */
+    public static TreeNode delete(TreeNode t, Comparable x, TreeDisplay display)
+    {
+    	if (t == null) throw new IllegalArgumentException();
+    	
+        if (t.getValue().equals(x)) 
+        	return deleteNode(t, display);
+        
+        if (x.compareTo(t.getValue()) < 0)
+        	return delete(t.getLeft(), x, display);
+        
+        if (x.compareTo(t.getValue()) > 0)
+        	return delete(t.getRight(), x, display);
+        
+        return null;
+    }
+
+}

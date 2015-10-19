@@ -1,0 +1,149 @@
+import info.gridworld.grid.*; //deals with the Location class
+import java.awt.Color; //get a color for the block
+
+/*
+* This class, Block, provides for the implementation of a block that takes up spaces
+* on a MyBoundedGrid, part of the GridWorld case study on the AP Computer Science A
+* Exam. A Block has three instance variables: color, location, and the grid that it is
+* in. A Block can get its color, change its color, get the grid, get its location in 
+* the grid, remove itself from the grid, put itself in a grid at a specified location, 
+* and move to a different location in the same grid.
+* @author 
+*/
+public class Block
+{
+	//defines private instance variables for grid, location, and color
+    private MyBoundedGrid<Block> grid;
+    private Location location;
+    private Color color;
+    
+	/**
+    * Zero-parameter constructor; default values for grid and location are null, and
+    * color is blue (because blue is the greatest color ever!). 
+    */
+    public Block()
+    {
+        color = Color.BLUE;
+        grid = null;
+        location = null;
+    } //close constructor
+    
+	/**
+	* This method simply returns the value of the instance variable for color. 
+	* @return the color of the Block
+    */
+    public Color getColor()
+    {
+        return color;
+    } //close getColor()
+    
+	/**
+	* This method changes the color of a block to a different color, specified as a 
+	* parameter. A simple usage of the assignment operator suffices for this method.
+	* @param newColor is the color that we want to change the Block to
+	* @post the block is now a different color
+	*/
+    public void setColor(Color newColor)
+    {
+        color = newColor;
+    } //close setColor()
+    
+	/**
+    * This method returns the grid that the Block is placed in. This is an instance
+    * variable, as the Block knows the grid that it is in. 
+    * @return the Grid that the Block is currently in
+    */
+    public MyBoundedGrid<Block> getGrid()
+    {
+        return grid;
+    } //close getGrid()
+    
+	/**
+	* This method returns the location of the Block object in the grid.
+	* @return the value associated with the location instance variable of the Block
+	*/
+    public Location getLocation()
+    {
+        return location;
+    } //close getLocation()
+    
+	/**
+	* This method instructs the block to take itself out of the grid. There is a two-
+	* pronged approach we must take, as both the grid and the block must know of the
+	* newly created space on the grid. Therefore, we call the remove method on the grid
+	* and change all instance variables but color to null. 
+	* @post the grid is now lacking that block, and the block isn't in the grid
+	*/
+    public void removeSelfFromGrid()
+    {
+    	grid.remove(location); //deal with the grid
+        grid = null; //deal with the instance variables
+        location = null;
+    } //close removeSelfFromGrid()
+    
+	/**
+	* This method instructs a block to put itself in a grid, given the grid as well
+	* as the location that it must go in - passed as parameters. Once again, a two-
+	* pronged approach must be taken, as the grid and the block must know about the
+	* new occupant. However, a new problem faced is that the location may be occupied,
+	* necessitating the use of the removeSelfFromGrid for the original occupant.
+	* @param gr is the grid that the Block is going to go in
+	* @param loc is the location in the grid that the Block will occupy 
+	* @throws IllegalArgumentException if the location is not valid
+	* @post the block is now in the grid, and the grid now has a new occupant
+	*/
+    public void putSelfInGrid(MyBoundedGrid<Block> gr, Location loc)
+    {
+    	if (!gr.isValid(loc)) throw new IllegalArgumentException(); //throw exception
+    	
+    	Block prevBlock = gr.get(loc); //what to do if it's already occupied?
+    	
+        if (prevBlock != null)
+            prevBlock.removeSelfFromGrid(); //take it out, time to put in a new one!
+        
+        //two-way communication needed...deal with both grid and instance fields
+        gr.put(loc, this);
+        grid = gr;
+        location = loc;
+    } //close putSelfInGrid()
+
+    /**
+     * This method moves a block to a new location within the same grid. The same two-
+     * pronged approach works again, and we can even move the block to its own location.
+     * First, we remove what is at the location, remove what is at the new location (if
+     * occupied), and change the location instance variable and put it in the grid. 
+     * @param newLocation is the place we want to move the block to
+     * @throws IllegalArgumentException if newLocation isn't valid
+     * @post the Block is now moved to a different position in the same grid
+     */
+    public void moveTo(Location newLocation)
+    {
+    	if (!grid.isValid(newLocation)) throw new IllegalArgumentException(); //check + throw
+    	//exception
+    	
+    	
+         //take the block out of its existing location
+         
+         //Block previousOccupant = grid.get(newLocation); //what is there at the new place
+         
+         if (grid.get(newLocation) != null)
+             grid.get(newLocation).removeSelfFromGrid(); 
+         	//remove it if something is there
+         
+         //deals with the block itself
+         removeSelfFromGrid();
+         location = newLocation;
+         putSelfInGrid(grid,location); //insert into grid
+         
+    } //close moveTo()
+
+    /**
+	* The toString method inherited from Object class provides the location + color
+	* of the Block object, stored as instance variables, as a string. 
+	* @return a String with the location and color of the Block object. 
+	*/
+    public String toString()
+    {
+        return "Block[location=" + location + ",color=" + color + "]";
+    } //close toString()
+} //close Block class

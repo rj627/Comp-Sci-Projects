@@ -1,0 +1,157 @@
+//This class contains methods for common mathematical operations. 
+//@Rahul Jayaraman
+//version 091113
+
+public class FancyCalc //defining a new class FancyCalc
+{
+	//The below method returns the square of a number
+	//@param - any number x; this method is private, so it cannot be called alone
+	//@return - it will return the number x times itself
+	private square(x) 
+	{
+		return x*x; 
+	} // close square method
+	
+	//The below method returns the base times itself, exponent times. 
+	//@param - base - this is the number that will be multiplied
+	//@param - exponent - this is the number of times that base is multiplied w/ itself
+	//@return - it will return base^exponent
+	public pow(base,exponent) 
+	{
+		if (exponent == 0) // base case
+			return 1; // any base to the 0 power is 1, and we account for this here
+		else // start the recursive call
+			return base*this.pow(base,exponent-1); // call the method to increment down
+			//increments to exponent-1, eventually leading the exponent to 0
+			//we can then do the base case and keep multiplying by base
+	} // close method pow
+	
+	//The below method is a much faster version of the pow() method. 
+	//@param - base - this is the number that will be multiplied
+	//@param - exponent - this is the number of times that base is multiplied w/ itself
+	//@return - it will return base^exponent
+	public fastPow(base,exponent) 
+	{
+		if (exponent == 0) // base case
+			return 1; // exponents that are 0 make the expression automatically equal 1
+		
+		if (exponent % 2 == 0) // the reason for fastPow 
+		//if it's an even exponent, we can cut the work in half
+			return this.square(this.fastPow(base,exponent/2)); // make a recursive call 
+			//arguments are now (base, exponent/2); we can square that result for answer
+			
+		return base*this.fastPow(base,exponent-1); //if that doesn't work, increment down
+		//does a recursive call similar to the one in method pow()
+	} // close method fastPow
+	
+	//The below method uses Euclid's method to find the GCD of two numbers. 
+	//@param - x - this is any random number
+	//@param - y - this is another random number
+	//@return - this will return the greatest common divisor of the two numbers
+	public gcd(x,y)
+	{
+		if (y==0) //base case
+			return x; //return the initial number because you can't divide by 0
+		else
+			return this.gcd(y,x%y); // this recursive call uses Euclid's method
+			//uses the remainder of two numbers to continue the method
+			//will terminate when y =0; it doesn't matter whether x > y or y > x
+	}//close method gcd
+	
+	//This method ascertains if a number is prime; it divides it by all numbers below it.
+	//@param - num - this is a number that we are testing is prime
+	//@return - returns a boolean based on the method helpPrime 
+	public isPrime(num) 
+	{
+		return this.helpPrime(num,2); //we start the helper method at divisor 2 
+		//because 1 isn't prime, it will start at 2 and keep testing until it reaches num
+	}//close method isPrime
+	
+	//This is a helper method for the above isPrime() method. 
+	//@param - num - this is then number that you want to test is prime.
+	//@param - divisor - this is the number that num is divided by
+	//@return - a boolean based upon whether the conditions are true
+	//pre - divisor can NOT be 0
+	private helpPrime(num,divisor) 
+	{
+		if (divisor == num) // if we keep doing the recursive calls and we get here...
+			return true; // there is no factor other than the number itself
+			//it is prime
+		if (num % divisor == 0) //if there is any such number that evenly divides num
+			//then it's not prime, and we return false
+			return false;
+			
+		return this.helpPrime(num, divisor+1); // we recursively call this method 
+		//using the next highest divisor, we keep doing this until num == divisor or 
+		//divisor evenly divides num
+	}//close helper method helpPrime
+	
+	//This method calculates the factorial of a given number n. 
+	//@param - n is a number that you wish to find the factorial of. 
+	//@return - it will return n!
+	public fact(n) 
+	{ //implementation of the factHelp method
+		return this.factHelp(n, 1); // param result of factHelp() is 1 here (base case) 
+	}//close method fact
+	
+	//This method is a helper method for the fact() method. 
+	//@param - n is the number that you wish to find the factorial of. 
+	//@param - result is the number that is the base case's factorial (0! which is 1)
+	//@return - it will return an int that is the factorial of the number (dep. on result)
+	private factHelp(n,result) 
+	{
+		if (n==0) // base case - result is 1 in the implementation of factHelp
+			return result; // 0! is equal to 1
+		else
+			return n*this.factHelp(n-1, result); // this recursive call will keep going
+			//if the first argument is 0, then it will return 1 and then keep multiplying
+			//it will keep multiplying by 1, 2, ..., n-1, etc. (in reverse order) until n  
+	}//close factHelp method
+	
+	//This method finds the nth fibonacci number. 
+	//@param - This method takes an int n that will determine which Fibonacci number
+	//@return - a number that is the nth fibonacci number. 
+	public fib(n) 
+	{
+		if (n == 1) // the first Fibonacci number (can't add the previous two)
+			return 1; // fib(1) = 1
+		if (n == 2) // the second Fibonacci number (can't add the previous two)
+			return 1; // fib(2) = 1
+		else // prepare for the recursive call
+			return this.fib(n-2) + this.fib(n-1); // add the two previous Fibonacci #'s 
+	} // close method
+	
+	//This method will find the square root of any input number n using Newton's method.
+	//@param - n - this is the number that we desire to find the square root of
+	//@return - the square root of n. 
+	public sqrt(n) 
+	{
+		return this.doNewton(n,1); 	// doNewton method with initial guess 1
+	} // close sqrt method
+	
+	//This method will find the average of two numbers (it is helper to doNewton). 
+	//@param - x - this is the first number
+	//@param - y - this is the second number
+	//@return - it will return the average ((x+y)/2) of both numbers
+	private avg(x,y) 
+	{
+		return (x+y)/2; 
+	} // close the avg method
+	
+	//This method is the method that implements Newton's method in JavaTown. 
+	//@param - num - it is the number that we want the square root of
+	//@param - guess - it is our initial guess, that we will average with num
+	//@result - it will return guess if conditions are met
+	private doNewton(num,guess) 
+	//in the implementation of doNewton() in sqrt(), guess is 1
+	{
+		if (guess == num/guess || guess == (num/guess)-1) // if we are close enough
+		//we can stop if the guess is close enough to the actual value
+			return guess; // return the last guess, because it's approximately the value
+		else // prepare for the recursive call
+			return this.doNewton(num, this.avg(num/guess,guess)); // doNewton again
+			//two new arguments - the number and the average of the number and the guess
+			//this is how the packet says that Newton's method works
+	}	//close the doNewton method
+		
+} // close the FancyCalc class

@@ -1,0 +1,13 @@
+package breakoutGame;
+
+public class Breakout {
+
+	ShapeDisplay display;
+	
+	public Breakout()
+	{
+		display = new ShapeDisplay();
+		display.setTitle("Breakout");
+		
+	}
+}

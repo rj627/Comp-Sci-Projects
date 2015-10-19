@@ -1,0 +1,21 @@
+import info.gridworld.grid.*;
+import java.util.ArrayList;
+import java.util.Random;
+
+public class Tetris 
+{
+	private MyBoundedGrid<Block> currentGrid;
+	private BlockDisplay currentDisplay;
+	private Tetrad currentTetrad;
+	
+	public Tetris()
+	{
+		currentGrid = new MyBoundedGrid<Block>(20,10);
+		currentDisplay = new BlockDisplay(currentGrid);
+		currentDisplay.setTitle("Tetris");
+		currentTetrad = new Tetrad(currentGrid);
+		currentDisplay.showBlocks();
+		currentTetrad.translate(5, 5);
+		currentDisplay.showBlocks();
+	}
+}

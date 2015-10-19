@@ -1,0 +1,116 @@
+import info.gridworld.grid.Location;
+
+/*
+ * import info.gridworld.grid.*;
+ * import java.util.ArrayList;
+ * import java.util.Random;
+*/
+
+public class Tetris implements ArrowListener
+{
+	private MyBoundedGrid<Block> currentGrid;
+	private BlockDisplay currentDisplay;
+	private Tetrad currentTetrad;
+	
+	public Tetris()
+	{
+		currentGrid = new MyBoundedGrid<Block>(20,10);
+		currentDisplay = new BlockDisplay(currentGrid);
+		currentDisplay.setTitle("Tetris");
+		currentDisplay.setArrowListener(this);
+		currentTetrad = new Tetrad(currentGrid);
+		currentDisplay.showBlocks();
+	}
+
+	@Override
+	public void upPressed() 
+	{
+		if (currentTetrad.rotate())
+			currentDisplay.showBlocks();
+	}
+
+	@Override
+	public void downPressed() 
+	{
+		if (currentTetrad.translate(1, 0))
+			currentDisplay.showBlocks();
+	}
+
+	@Override
+	public void leftPressed() 
+	{
+		if (currentTetrad.translate(0, -1))
+			currentDisplay.showBlocks();
+	}
+
+	@Override
+	public void rightPressed() 
+	{
+		if (currentTetrad.translate(0, 1))
+			currentDisplay.showBlocks();
+	}
+	
+	public void play()
+	{
+		try
+		{
+			while (true)
+			{
+				if (currentTetrad.translate(1,0))
+				{
+					Thread.sleep(1000);
+					currentDisplay.showBlocks();
+				}
+				else
+				{
+					clearCompletedRows();
+					currentTetrad = new Tetrad(currentGrid);
+				}
+			}
+		}
+		
+		catch(InterruptedException e)
+		{
+		}	
+	}
+	
+	private boolean isCompletedRow(int row)
+	{
+		if (row < 0 || row > currentGrid.getNumRows()) throw new IllegalArgumentException();
+		
+		int count = 0;
+		
+		for (int i = 0; i < currentGrid.getNumCols(); i++)
+		{
+			Location tested = new Location(row, i);
+			if (currentGrid.get(tested) != null)
+				count++;
+		}
+		
+		if (count == currentGrid.getNumCols()) return true;
+		
+		else 
+			return false;
+	}
+	
+	private void clearRow(int row)
+	{
+		if (isCompletedRow(row)) 
+		{
+			for (int i = 0; i < currentGrid.getNumCols(); i++)
+			{
+				Location currentLoc = new Location(row, i);
+				Block currentBlock = currentGrid.get(currentLoc);
+				currentBlock.removeSelfFromGrid();
+			}
+		}
+	}
+	
+	private void clearCompletedRows()
+	{
+		for (int i = 0; i < currentGrid.getNumRows(); i++)
+		{
+			clearRow(i);
+		}
+	}
+}

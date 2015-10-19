@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Move 2 elements to &apos;Binary Trees/src/(default package)&apos;&#x0A;- Original project: &apos;Solitaire&apos;&#x0A;- Destination element: &apos;Binary Trees/src/(default package)&apos;&#x0A;- Original elements:&#x0A;     HeapUtils.java&#x0A;     HeapMain.java&#x0A;- Update references to refactored element" description="Move compilation units" destination="=Binary Trees/src&lt;" element1="/src&lt;{HeapUtils.java" element2="/src&lt;{HeapMain.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.move" policy="org.eclipse.jdt.ui.moveResources" qualified="false" references="true" stamp="1397577434090" units="2" version="1.0"/>
+</session>

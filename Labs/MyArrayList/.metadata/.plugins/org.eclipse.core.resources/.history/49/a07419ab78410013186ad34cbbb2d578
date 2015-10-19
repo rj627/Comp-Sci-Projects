@@ -1,0 +1,269 @@
+package myArrayList;
+
+import java.util.Iterator;
+
+/* This class provides for the implementation of a smart array - the 
+ * class's methods can get the size of the smart array, append an 
+ * object to the smart array, add an object to the smart array at 
+ * an index, get an object given an index, set an object at a particular
+ * index to be a different value, and remove an object given a specific
+ * index. The iterator() and listIterator() methods return null; they
+ * will be developed in a future lab. 
+ * @author Rahul Jayaraman
+ * @version 102513
+ */
+
+public class MyArrayList<E> implements MyList<E>, MyListIterator<E> //class definition
+{
+	private Object[] myArray; //instance array storing the values
+	public int myArraySize; //instance value storing the array's size
+	
+	/**
+	 * Constructor for myArrayList, not given an initial capacity. 
+	 * The constructor is overloaded - there is another constructor,
+	 * but with different parameters. 
+	 * @param none
+	 * @return none
+	 * <dt><b>Precondition:</b><dd> none
+	 * <dt><b>Postcondition:</b><dd> sets the myArray instance field to a new array of nulls
+	 * and sets the size to 0
+	 */
+	
+	public MyArrayList() 
+	{
+		myArray = new Object[10]; //creation of a new array
+		myArraySize = 0; //the number of non-null elements is the size
+	} //close constructor
+	
+	/**
+	 * Constructor for the myArrayList, given an initial capacity. This
+	 * is an example of overloading constructors - we have multiple
+	 * constructors that can take multiple arguments (or none at all). 
+	 * @param capacity - the desired number of elements to be stored 
+	 * @return none
+	 * @throws IllegalArgumentException if capacity is negative
+	 * <dt><b>Precondition:</b><dd> capacity cannot be negative or 0
+	 * <dt><b>Postcondition:</b><dd> sets the myArray instance field to a new array of nulls
+	 * along with the myArraySize variable to 0
+	 */
+	
+	public MyArrayList(int capacity)
+	{
+		if (capacity < 0) //disallows a negative capacity
+				throw new IllegalArgumentException ("Capacity cannot be negative");
+		
+		myArray = new Object[capacity]; //creates a new array with specified capacity
+		myArraySize = 0; 
+	} //close constructor
+
+	/**
+	 * This method is an implementation of the toString() method that is found in the 
+	 * superclass Object, which all objects inherit from. 
+	 * @param none
+	 * @return the array as a string
+	 * <dt><b>Postcondition:</b><dd> the array is now converted into a string
+	 */
+	public String toString()
+	{
+		if (myArraySize==0) //returns the empty array as a string
+			return "[]";
+		
+		String s = "["; //starts the array's string
+		
+		for (int i = 0; i < myArraySize-1; i++) //prints out each element individually
+		{
+			s = s + myArray[i]+", ";	
+		} //close for loop
+		
+		return s+myArray[myArraySize-1]+"]"; //returns all the elements in the array as a string
+	} //close toString()
+	
+	/**
+	 * This method returns the size of the smart array; i.e. how many elements are contained in 
+	 * the array. The default value is 10; however, there may be more if the add() or remove()
+	 * methods have been called. It overrides the size() method from the MyList interface. 
+	 * @param none
+	 * @return the size of the array stored in the instance variable myArraySize
+	 */
+	public int size() 
+	{
+		return myArraySize; //just returns the stored instance variable
+	} //close size()
+	
+	/**
+	 * This method appends a value/object to the end of a given instance array. 
+	 * This will run in O(1) time on average because once the array is full, 
+	 * it will double the size of the array. Therefore, for future uses of the add() 
+	 * method, it will run in O(1) time as it is a simple usage of the assignment operator.
+	 * @param obj is the object to be appended to the end of the array
+	 * @return always true - it can always append to the end of any array  
+	 */
+	public boolean add(E obj) 
+	{
+		System.out.println("Adding: " + obj); //tells user what is being added
+		if (size() == myArray.length) //if the array is full
+		{
+			doubleSize(); //double the size
+		}
+		myArray[myArraySize]=obj; //set the last element to be obj
+		myArraySize++; //increase the size of the instance array by 1
+		return true; //appending was a success!
+	} //close add()
+	
+	/**
+	 * This is a helper method that doubles the size of an array when another method
+	 * calls for it. For example, if the array is full, yet the user wants to add another
+	 * value, the array's size doubles; the empty spaces can be used later - causing it to run
+	 * in O(1) time <i>on average</i>. 
+	 * @param none
+	 * @return none
+	 * <dt><b>Postcondition:</b><dd> The instance array is replaced by one with the same values
+	 * but double the size. 
+	 */
+	private void doubleSize()
+	{
+		System.out.println("Doubling Size"); //indicates to the user that size is being doubled
+		Object[] newArray = new Object[2*myArraySize]; //creates a new array with 2x size
+		for (int i = 0; i < myArraySize; i++)
+		{
+			newArray[i]=myArray[i]; //sets each value in the new array to match the old one's
+		}
+		myArray = newArray; //sets the myArray pointer to the new array created
+	} //close doubleSize()
+	
+	/**
+	 * This method will add an object at the desired index and then shift all the objects 
+	 * to its right one index down. This will be accomplished through the use of for loops
+	 *  from the end of the array to add 1 to each index and set it to 
+	 *  the previous index value; finally, set myNewArray[index] to the object input. 
+	 *  Index cannot be negative, nor can it be greater than the size of the array.  
+	 *  This runs in O(n) time (for loop).  
+	 *  @param index is the location where the element obj is being added.
+	 *  @param obj is the item to be inserted at the specified index
+	 *  @return none
+	 *  @throws ArrayIndexOutOfBoundsException if index < 0 or greater than the array's length
+	 *  <dt><b>Precondition:</b><dd> index cannot be negative/greater than the array's size - 
+	 *  this is why we are throwing the error in case the user accidentally inputs one
+	 *  <dt><b>Postcondition:</b><dd> myArray[index] will be set to obj
+	 */
+	
+	public void add(int index, E obj) 
+	{
+		if (index < 0 || index > myArray.length) //check if an exception needs to be thrown
+				throw new ArrayIndexOutOfBoundsException();
+		
+		if (myArraySize==myArray.length) //maximum size has been reached
+		{
+			Object[] newArray2= new Object[2*myArraySize]; //create a new array of Objects
+			//with size 2*the size of the old array
+			
+			for (int i = 0; i < index; i++)
+			{
+				newArray2[i]=myArray[i]; //sets each element to the corresponding index
+			} //close for loop
+			
+			myArray[index]=obj;  // sets the desired index to obj
+			
+			for (int i = myArraySize; i > index; i--)
+			{
+				newArray2[i+1]=myArray[i]; //shifts each index one to the right
+			}
+		} 
+		else
+		{
+			for (int i = myArraySize; i > index; i--)
+			{
+				myArray[i+1]=myArray[i];
+			}
+			myArray[index]=obj; //if the array isn't full and there is more room
+		}
+		
+		myArraySize++; //increase the size of the array by 1
+			
+	} //close overloaded add() method
+
+	/**
+	 * This method gets the desired value at a specified index. 
+	 * It is not very hard to implement; in fact, we can merely use the command for a simple
+	 * array (myNewArray[index]). We return the value stored at that index. This runs in O(1) 
+	 * time (it is only one calculation). 
+	 * @param index is the location where we want to find the object
+	 * @return the object that was at that location (casted to a generic type)
+	 * <dt><b>Precondition:</b><dd> index cannot be negative or greater than/equal myArraySize
+	 * @throws ArrayIndexOutOfBoundsException() to account for users not following the precondition. 
+	 */
+	public E get(int index) 
+	{
+		if (index <0 || index >= myArraySize) //check if an exception can be thrown
+			throw new ArrayIndexOutOfBoundsException();
+		
+		return (E) myArray[index]; //return value stored at that location
+	} //close get()
+
+	/**
+	 * This method changes a given index value to the value that is input into the argument. 
+	 * Once again, we use the assignment operator (=) to set myNewArray[index] = obj. 
+	 * This will run in O(1) time because it is a simple assignment.
+	 * @param index is the location of the object we want to change
+	 * @param obj is the thing that we want to replace the current object with 
+	 * @return the object that was there previously
+	 * <dt><b>Precondition:</b><dd> index cannot be negative or greater/equal to myArraySize
+	 * <dt><b>Postcondition:</b><dd> the array now has object obj in the specified index
+	 * @throws ArrayIndexOutOfBoundsException() if the precondition is not met
+	 */
+	public E set(int index, E obj) 
+	{
+		if (index < 0 || index >= myArraySize) //check if exception needs to be thrown
+			throw new ArrayIndexOutOfBoundsException();
+		
+		Object temp = myArray[index]; //sets the new value to what is currently at that index
+		myArray[index]= obj; //changes the value
+		return (E) temp; //returns the previous value
+	} //close set()
+
+	/**
+	 * This method removes an object from a given index and slides everything back an index
+	 * through the use of a for loop. We must cast the return to E because we do not 
+	 * know what type is stored in the ArrayList. 
+	 * @param index - this is the index that we want to remove the object from
+	 * @return This will return the object that was at index <i>index</i>; it must
+	 * be casted to E, as noted previously.
+	 * <dt><b>Precondition:</b><dd> - index cannot be negative nor greater than myArraySize
+	 * <dt><b>Postcondition:</b><dd> - the smart array will now be devoid of that object
+	 * that used to be stored at that particular index. 
+	 * @throws ArrayIndexOutOfBoundsException if the precondition is not met
+	 */
+	
+	public E remove(int index) 
+	{
+		if (index < 0 || index >= myArraySize) //check if an exception can be thrown
+			throw new ArrayIndexOutOfBoundsException();
+		
+		Object temp = myArray[index]; //setting a temporary variable to store the value 
+		//present at that location before this code runs
+		for (int i = index+1 ;i <= myArraySize-1; i++)
+		{
+			myArray[i-1]=myArray[i]; //pushes everything in the array back by 1
+		}
+		myArraySize--; //decreases by 1 the size of the array
+		return (E) temp; //returns what was previously there
+		
+	} //close remove()
+
+	/**
+	 * iterator() method will return null as it will be developed in a later lab. 
+	 */
+	public Iterator<E> iterator() 
+	{
+		return null;
+	} //close iterator()
+
+	/**
+	 * listIterator() method will return null as it will be developed in a later lab. 
+	 */
+	public MyListIterator<E> listIterator() 
+	{
+		return null;
+	}//close listIterator()
+	
+} //close class MyArrayList<E>

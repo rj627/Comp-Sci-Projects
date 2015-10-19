@@ -1,0 +1,60 @@
+/*
+ * import info.gridworld.grid.*;
+ * import java.util.ArrayList;
+ * import java.util.Random;
+*/
+
+public class Tetris implements ArrowListener
+{
+	private MyBoundedGrid<Block> currentGrid;
+	private BlockDisplay currentDisplay;
+	private Tetrad currentTetrad;
+	
+	public Tetris()
+	{
+		currentGrid = new MyBoundedGrid<Block>(20,10);
+		currentDisplay = new BlockDisplay(currentGrid);
+		currentDisplay.setTitle("Tetris");
+		currentDisplay.setArrowListener(this);
+		currentTetrad = new Tetrad(currentGrid);
+		currentDisplay.showBlocks();
+	}
+
+	@Override
+	public void upPressed() 
+	{
+		if (currentTetrad.translate(-1, 0))
+		{
+			currentDisplay.showBlocks();
+			System.out.println("up pressed");
+		}
+		
+	}
+
+	@Override
+	public void downPressed() 
+	{
+		if (currentTetrad.translate(1, 0))
+		{
+			currentDisplay.showBlocks();
+			System.out.println("down pressed");
+		}
+	
+	}
+
+	@Override
+	public void leftPressed() 
+	{
+		if (currentTetrad.translate(0, -1))
+		{
+			currentDisplay.showBlocks();
+		}
+	}
+
+	@Override
+	public void rightPressed() 
+	{
+		if (currentTetrad.translate(0, 1))
+			currentDisplay.showBlocks();
+	}
+}

@@ -1,0 +1,14 @@
+package breakoutGame;
+
+public class Breakout {
+
+	ShapeDisplay display;
+	
+	public Breakout()
+	{
+		display = new ShapeDisplay();
+		display.setTitle("Breakout");
+		Shape square = new Shape(false, null, 5, 05, 5, 5);
+		display.add(square);
+	}
+}

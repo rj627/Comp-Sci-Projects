@@ -1,0 +1,296 @@
+package sortLab; //package declaration
+
+/*
+* This class provides for methods to perform various types of sort operations, including 
+* selection sort, insertion sort, merge sort, and quick sort. The latter two have
+* helper methods that help them perform their function recursively; these helper methods
+* are called in the body of the main method, and they provide a sorted array. 
+* @author Rahul Jayaraman & Mr. Richard Page
+* @version 112013
+*/
+public class Sorter
+{
+
+	private SortDisplay display; //instance variable of a SortDisplay that is used by
+	//an instance of the sorter - it must have an associated display to visualize the sort
+	
+	/**
+	* main method instantiates a sorter instance
+	* Usage: called directly by the IDE or when Java is launched 
+	* @params args an array of arguments for legacy command line, the values aren't used
+	*/
+	public static void main(String[] args)
+	{
+		Sorter sorter = new Sorter();
+	} //close main() method
+	
+	/**
+	* Sorter()
+	* Usage:  Sorter aSorter = new Sorter()
+	* ________________________________________
+	* constructor for Sorter objects.  Creates a new display, which controls
+	* all of the sorting by means of call-backs to this class.
+	*/
+	
+	public Sorter()
+	{
+		display = new SortDisplay(this); //create a new SortDisplay
+	} //close constructor
+	
+
+	/**
+	 * This method returns the index of the minimum value in a comparable array. It does 
+	 * this by traversing the array through use of a for loop; it compares each element
+	 * to the one before, and if it's less, then it replaces the lowestValueIndex
+	 * with the value of the index at that location. It will be implemented in selectionSort.
+	 * @param a is the array that we want to find the index of the minimum value in
+	 * @param startIndex this is where we want to start looking
+	 * @return the index where the minimum value in the array is stored.
+	 * @pre this is an array of Comparable objects
+	 */
+	public int indexOfMin(Comparable[] a, int startIndex)
+	{ 
+		int lowestValueIndex = startIndex; //initialize the lowestValueIndex as the start
+		
+		for (int i = startIndex+1; i < a.length; i++) //traverse the array a
+		{
+			if (a[i].compareTo(a[lowestValueIndex])<0) //if it comes before
+				lowestValueIndex = i;	//change the index of that location
+		} //close for loop
+		return lowestValueIndex; //return that lowest value found in the traversal
+	} //close indexOfMin
+
+	/**
+	 * This method does a selection sort on the input array of Comparable objects. It
+	 * does this by finding the lowest value in a given array and then moving it into
+	 * the first position. This is accomplished through the use of a for loop - by successively
+	 * reducing the size of the array by 1, we ensure that all the elements are sorted
+	 * and into their right positions (i.e. the lowest element in the sub-array is placed first
+	 * in that particular sub-array, and the elements are swapped).
+	 * @param a is the array that we want to sort
+	 * @pre The array is filled with Comparable objects that may be in any order
+	 * @post The array is now sorted in ascending order (alphabetical, numerical, etc.)
+	 */
+	public void selectionSort(Comparable[] a)
+	{
+		for (int i = 0; i < a.length-1; i++) //traverse the array and divide it up
+		{
+			int minIndex = indexOfMin(a,i); //find the min index of each sub-array
+			
+			//the below code swaps the minimum element with the first element of the sub-array
+			Comparable temp = a[i]; 
+			a[i]=a[minIndex];
+			display.update(); //update the sorter display to reflect the change
+			a[minIndex]=temp;
+			display.update();
+		} //close for loop
+	} //close selectionSort method
+	
+	/**
+	 * This method inserts a value at a particular index in an array and then shifts down all 
+	 * the other values that succeed it. This is useful in insertionSort, where we need to keep
+	 * inserting the lowest value in each "sub-array." This is accomplished through the use of
+	 * a while loop with the condition that index must be positive and the value at that index
+	 * must be less than the value at nextIndex. We shift the values accordingly and subtract the index
+	 * just to make sure that all the previous sub-arrays are sorted.
+	 * @param a is the array whose values we want to rearrange
+	 * @param nextIndex is the index before which we want to sort
+	 * @pre the values before nextIndex are already in increasing order
+	 * @post all the elements before nextIndex are in ascending order. 
+	 * @throws ArrayIndexOutOfBoundsException if nextIndex is a.length or larger
+	 */
+	public void insert(Comparable[] a, int nextIndex)
+	{
+		Comparable current = a[nextIndex]; //whatever is stored at the nextIndex
+		int index = nextIndex - 1; //what comes before the nextIndex
+		
+		while(index >= 0 && current.compareTo(a[index])< 0)
+		{
+			a[index+1] = a[index]; //switch the values
+			display.update(); //update the display
+			index--; //increment down and check the conditions for the while loop again
+		} //close while loop
+		
+		a[index+1] = current; //if the conditions are not satisfied
+		display.update();
+		
+	} //close insert()
+	
+	/**
+	 * This method uses the insertion sort algorithm to sort an array. Basically, it traverses the array
+	 * and inserts each of the lowest values in their respective positions. We use a for loop because we
+	 * want to consider each sub-array individually for its least and greatest elements; we accomplish
+	 * the insertion through the use of a helper method. 
+	 * @param a is the array to be sorted using the insertion sort method
+	 * @post all the elements in the array are sorted in ascending order
+	 */
+	public void insertionSort(Comparable[] a)
+	{
+		for (int i = 0; i < a.length; i++) //traverse array
+		{
+			insert(a,i); //deal with each sub-array by considering each i as a nextIndex value
+		} //close for loop
+	} //close insertionSort()
+
+	/**
+	 * This method relies on the recursive mergesortHelp method to accomplish its goal. Basically, merge
+	 * sort splits two arrays in half and then keeps splitting it in half until it reaches one element - 
+	 * at this point, it will merge the two individual element arrays together (because an array of 
+	 * one element is already sorted) and then keep doing this back up the chain. Runtime is O(n log n) 
+	 * because it will split many times as n increases, but it halves the problem at each step - therefore
+	 * making a log n factor play into the runtime. 
+	 * @param a is the array to be sorted using mergeSort
+	 * @post all the elements in the array are now in ascending order
+	 */
+	public void mergesort(Comparable[] a)
+	{
+		mergesortHelp(a,0,a.length-1); //call to the helper method
+	} //close mergesort()
+
+	/**
+	 * This method uses recursion to split up an array in half and then sort these. It relies on a recursive
+	 * definition as well as the fact that an array with one element is sorted - thus merging them and going
+	 * "back up the chain" to return the sorted original array. This helper method is called in the main
+	 * mergesort method with specific parameters that encompass the whole array. Base case - highIndex > lowIndex.
+	 * @param a is the array that we want to be sorted using mergesort
+	 * @param lowIndex is the index that we want the sorting to start from
+	 * @param highIndex is the index that we want the sorting to end 
+	 * @post a[lowIndex] to a[highIndex] are in increasing order
+	 */
+	private void mergesortHelp(Comparable[] a, int lowIndex, int highIndex)
+	{
+		int middle = (lowIndex + highIndex)/2; //what is a midpoint of the array?
+
+		if (highIndex>lowIndex) //base case
+		{
+			mergesortHelp(a,lowIndex,middle); //split up the array and do the same for each half
+			mergesortHelp(a,middle+1,highIndex);
+		} //close if
+		
+		merge(a,lowIndex,middle,highIndex); //if highIndex and lowIndex are the same (once it's finished 
+		//splitting up the array into one-sized pieces)
+		
+	} //close helper method
+	
+	/**
+	* method merge
+	* Useage: merge(inputArray, lowIndex, midIndex, highIndex)
+	*_______________________________________________
+	* Merges the two halves of the input array into one.  The method assumes
+	* that each half of the input array is sorted as follows:
+	* 
+	*                a[lowIndex] to a[midIndex] are in increasing order.
+	*                a[midIndex + 1] to a[highIndex] are in increasing order.
+	* The method creates an array to hold the output.  It then establishes 
+	* two pointers into the two halves of the input array.  The values at the
+	* pointer locations are compared, and the smallest is added to the output
+	* array.  The corresponding pointer is then increased by one.  In the event
+	* either half becomes empty, the remaining values are copied to the output
+	* array.
+	* Postcondition: a[lowIndex] to a[highIndex] are in increasing order.
+	*
+	* @param a is the input array of Comparable values
+	* @param lowIndex is the index into the array a corresponding to the beginning
+	*        of the first half of the array to merge
+	* @param midIndex is the index of the last value in the first half of the array
+	* @param highIndex is the index of the last value in the second half of the array
+	*/
+	private void merge(Comparable[] a, int lowIndex, int midIndex, int highIndex)
+	{
+		Comparable[] copy = new Comparable[a.length];
+		for (int i = lowIndex; i <= highIndex; i++)
+			copy[i] = a[i];
+		int left = lowIndex;
+		int right = midIndex + 1;
+		for (int i = lowIndex; i <= highIndex; i++)
+		{
+			if (right > highIndex ||
+				(left <= midIndex && copy[left].compareTo(copy[right]) < 0))
+			{
+				a[i] = copy[left];
+				left++;
+			}
+			else
+			{
+				a[i] = copy[right];
+				right++;
+			}
+			display.update();
+		}
+	}
+
+	/**
+	 * This method calls the quicksortHelp method to accomplish a quicksort. Helper methods like these
+	 * are usually used if the actual method has fewer arguments than are necessary - thus forcing the
+	 * developer to create a helper method that will be called in this case. The helper method is recursive,
+	 * partitioning each sub-array until each array has length 1. Finally, these are merged - more info
+	 * about the helper method can be found in the method-level comment. 
+	 * @param a is the array that we want to sort using quicksort
+	 * @post the array a is now sorted in ascending order 
+	 */
+	public void quicksort(Comparable[] a)
+	{
+		quicksortHelp(a,0,a.length-1); //call to helper method
+	} //close quicksort()
+
+	/**
+	 * This method quicksorts an array using recursion. A partition is provided, and then this method
+	 * calls itself (oh, hey, recursion!) to provide a new partition for the smaller array. This keeps
+	 * doing it until each array is one element (already sorted), and then the arrays are merged
+	 * using the provided merge method. Runtime is O(n log n), using a statistical argument. 
+	 * @param a is the array to be sorted using quicksort
+	 * @param lowIndex is the start of the location where we want to have a partition
+	 * @param highIndex is the end of the location where we want to have a partition
+	 * @post all the elements from lowIndex to highIndex are in ascending order
+	 */
+	private void quicksortHelp(Comparable[] a, int lowIndex, int highIndex)
+	{
+		int partitionLocation = partition(a,lowIndex,highIndex); //find a partition location
+
+		if (highIndex>lowIndex) //base case
+		{
+			quicksortHelp(a,lowIndex,partitionLocation); //quicksort the stuff before ...
+			quicksortHelp(a,partitionLocation+1,highIndex); // ... and after the partition
+		} //close if
+		
+		merge(a,lowIndex,partitionLocation,highIndex); //merge it if highIndex == lowIndex
+		
+	} //close quicksortHelp
+	
+	/**
+	* Method partition
+	* Usuage: int pivotIndex = partition(a, lowIndex, highIndex)
+	*___________________________________________________________
+	*
+	*Returns the index of the pivot element defined as follows:
+	*                All elements on the left side of the pivot (from lowIndex)
+	*                are less than or equal to the pivot.
+	*                All elements on the right side of the pivot (through highIndex)
+	*                are greater than or equal to the pivot.
+	* The computation is performed in place.
+	* @param a the array to partion
+	* @param lowIndex is the index of the start of the part of array a to consider
+	* @param highIndex is the index of the end of the part of array a to consider
+	* @return the index of the pivot element in array a
+	*/
+	
+	private int partition(Comparable[] a, int lowIndex, int highIndex)
+	{
+		int pivot = lowIndex;
+		for (int unsorted = lowIndex + 1; unsorted <= highIndex; unsorted++)
+		{
+			if (a[unsorted].compareTo(a[pivot]) < 0)
+			{
+				Comparable temp = a[pivot];
+				a[pivot] = a[unsorted];
+				display.update();
+				a[unsorted] = a[pivot + 1];
+				display.update();
+				a[pivot + 1] = temp;
+				display.update();
+				pivot++;
+			}
+		}
+		return pivot;
+	} //close partition()
+} //close Sorter class

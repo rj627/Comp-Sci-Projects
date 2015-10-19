@@ -1,0 +1,35 @@
+/*
+ * 
+ */
+
+public class HeapUtils 
+{
+	/**
+	 * This method heapifies an input array (i.e. makes its binary tree representation satisfy the heap
+	 * property). If the root (specified by index) is a leaf, then it is trivially a heap. Otherwise,
+	 * determine the maximum value of the root and the children. If the root contains the maximum value,
+	 * then the heap condition is satisfied. Otherwise, swap the root value with the maximum value, which
+	 * may violate the heap condition for the left and right subtree. We then recursively heapify the
+	 * subtree involved in the swap. This method runs in O(n log n) time, where n is the number of items
+	 * in the array, because of the need to potentially review all the nodes of the input tree.
+	 * @param heap is the array representation of a heap that we want to heapify
+	 * @param index is the root of the "subtree" that we would like to heapify
+	 * @param heapSize is the size of the heap, which may not be heap.length - 1
+	 */
+	public static void heapify(Comparable[] heap, int index, int heapSize)
+	{
+		//code here
+	} //close heapify()
+	
+	/**
+	 * This method swaps two values in an array. One is stored in a temporary variable, one of the values
+	 * is switched, and then the value in the temporary variable is assigned to the other index.
+	 * @param array is the array in which we would like to swap two values
+	 * @param index1 is one of the indices that we want to swap the value with
+	 * @param index2 is the other index that we would like to swap the value with
+	 */
+	private void swapValues(Comparable[] array, int index1, int index2)
+	{
+		//code here
+	} //close swapValues()
+} //close HeapUtils class

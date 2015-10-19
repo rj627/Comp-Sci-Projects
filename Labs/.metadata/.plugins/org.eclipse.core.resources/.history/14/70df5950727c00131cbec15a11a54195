@@ -1,0 +1,245 @@
+import info.gridworld.grid.*;
+
+import java.util.Random;
+import java.util.concurrent.Semaphore;
+import java.awt.Color;
+
+/*
+ * This class, Tetrad, provides for the functionality of making a collection of four adjacent
+ * blocks in the MyBoundedGrid<E> interface that is present in the AP Computer Science A exam. 
+ * The Tetrad class knows the blocks that a Tetrad contains, the grid that it is in, the various
+ * colors possible for blocks, as well as a semaphore that prevents concurrent modification 
+ * of the block from a different threat. It can translate, rotate, add itself to a location, 
+ * remove itself from a location, and make sure a location is empty before moving there. 
+ */
+public class Tetrad 
+{
+	//defined instance variables (the blocks that it is comprised of) and the grid it is in
+	private Block[] blocks;
+	private MyBoundedGrid<Block> grid;
+	
+	//the only initialized instance variable has all the colors possible
+	private Color[] types = {Color.RED,Color.GRAY, Color.CYAN,Color.YELLOW,Color.MAGENTA,
+			Color.BLUE,Color.GREEN};
+	
+	//to prevent concurrent modification
+	private Semaphore lock;
+	
+	/**
+	 * One-parameter constructor for a tetrad. In this constructor, the grid is initialized, 
+	 * as is the array of blocks. A random color is chosen from the array, and depending on
+	 * the color, each of the blocks is changed to fit the color and associated shape. The
+	 * blocks appear in the grid at the very top center - each location is defined below.
+	 * @param gr is the grid that the Tetrad will be placed in
+	 */
+	public Tetrad(MyBoundedGrid<Block> gr)
+	{
+		grid = gr;
+		
+		Color chosen = types[new Random().nextInt(types.length)]; //choose a random color
+		
+		blocks = new Block[4]; //create an array of blocks (a tetrad is represented by this)
+		
+		lock = new Semaphore(1, true); //make a new semaphore
+		
+		for (int i = 0 ; i < 4; i++)
+			blocks[i] = new Block(); //add blocks to the Block array!
+		
+		//the below code deals with all the cases for the chosen color
+		
+		if (chosen.equals(Color.RED))
+		{
+			for (int i = 0; i < 4; i ++)
+				blocks[i].setColor(Color.RED); //sets color to red
+			
+			//indicates the location where each block of the Tetrad (shaped like I) should go
+			Location[] locs = {new Location(1, grid.getNumCols()/2 - 1), 
+							   new Location(0, grid.getNumCols()/2 - 1),
+							   new Location(2, grid.getNumCols()/2 - 1),
+							   new Location(3, grid.getNumCols()/2 - 1)}; 
+			
+			addToLocations(grid, locs); //adds the Tetrad to the grid at specified locations
+		} //close if
+		
+		else if (chosen.equals(Color.GRAY))
+		{
+			for (int i = 0; i < 4; i ++)
+				blocks[i].setColor(Color.GRAY); //sets color to gray
+			
+			//indicates the location where each block of the Tetrad (T) should go
+			Location[] locs = {new Location(0, grid.getNumCols()/2 - 1), 
+							   new Location(0, grid.getNumCols()/2 - 2),
+							   new Location(0, grid.getNumCols()/2),
+							   new Location(1, grid.getNumCols()/2 - 1)};
+			
+			addToLocations(grid, locs); //adds the Tetrad to the grid at specified locations
+		} //close if
+		
+		else if (chosen.equals(Color.CYAN))
+		{
+			for (int i = 0; i < 4; i ++)
+				blocks[i].setColor(Color.CYAN); //sets color to cyan
+			
+			//indicates the location where each block of the tetrad (O) should go
+			Location[] locs = {new Location(0, grid.getNumCols()/2 - 1), 
+							   new Location(0, grid.getNumCols()/2 - 2),
+							   new Location(1, grid.getNumCols()/2 - 1),
+							   new Location(1, grid.getNumCols()/2 - 2)};
+			
+			addToLocations(grid, locs); //adds the Tetrad to the grid at specified locations
+		} //close if
+		
+		else if (chosen.equals(Color.YELLOW))
+		{
+			for (int i = 0; i < 4; i ++)
+				blocks[i].setColor(Color.YELLOW); //sets color to yellow
+			
+			//indicates the location where each block of the tetrad (L) should go
+			Location[] locs = {new Location(1, grid.getNumCols()/2 -1), 
+							   new Location(0, grid.getNumCols()/2 -1),
+							   new Location(2, grid.getNumCols()/2 -1),
+							   new Location(2, grid.getNumCols()/2)};
+			
+			addToLocations(grid, locs); //adds the Tetrad to the grid at specified locations
+		} //close if
+		
+		else if (chosen.equals(Color.MAGENTA))
+		{
+			for (int i = 0; i < 4; i ++)
+				blocks[i].setColor(Color.MAGENTA); //sets color to magenta
+			
+			//indicates the location where each block of the tetrad (J) should go
+			Location[] locs = {new Location(1, grid.getNumCols()/2 - 1), 
+							   new Location(0, grid.getNumCols()/2 - 1),
+							   new Location(2, grid.getNumCols()/2 -1),
+							   new Location(2, grid.getNumCols()/2 - 2)};
+			
+			addToLocations(grid, locs); //adds the Tetrad to the grid at specified locations
+		} //close if
+		
+		else if (chosen.equals(Color.BLUE))
+		{
+			for (int i = 0; i < 4; i ++)
+				blocks[i].setColor(Color.BLUE); //sets color to blue
+			
+			//indicates the location where each block of the tetrad (S) should go
+			Location[] locs = {new Location(1, grid.getNumCols()/2 - 1), 
+							   new Location(1, grid.getNumCols()/2 - 2),
+							   new Location(0, grid.getNumCols()/2 - 1),
+							   new Location(0, grid.getNumCols()/2)};
+			
+			addToLocations(grid, locs); //adds the Tetrad to the grid at specified locations
+		} //close if
+		
+		else if (chosen.equals(Color.GREEN))
+		{
+			for (int i = 0; i < 4; i ++)
+				blocks[i].setColor(Color.GREEN); //sets color to green
+			
+			//indicates the location where each block of the tetrad (Z) should go
+			Location[] locs = {new Location(0, grid.getNumCols()/2 -1), 
+							   new Location(1, grid.getNumCols()/2 -1),
+							   new Location(1, grid.getNumCols()/2),
+							   new Location(0, grid.getNumCols()/2 - 2)};
+			
+			addToLocations(grid, locs); //adds the Tetrad to the grid at specified locations
+		} //close if
+	} //close one-parameter constructor
+	
+	private void addToLocations(MyBoundedGrid<Block> grid, Location[] locs)
+	{
+		for (int i = 0; i < locs.length; i++)
+		{
+			blocks[i].putSelfInGrid(grid, locs[i]);
+		}
+	}
+	
+	private Location[] removeBlocks()
+	{
+		Location[] prevLocs = new Location[4];
+		
+		for (int i = 0; i < 4; i ++)
+		{
+			prevLocs[i] = blocks[i].getLocation();
+			blocks[i].removeSelfFromGrid();
+		}
+		
+		return prevLocs;
+			
+	}
+	
+	private boolean areEmpty(MyBoundedGrid<Block> grid, Location[] locs)
+	{
+		for (int i = 0; i < locs.length; i++)
+		{
+			if (grid.get(locs[i])!= null) return false;
+		}
+		
+		return true;
+				
+	}
+	
+	public boolean translate(int deltaRow, int deltaCol)
+	{
+		
+			Location[] newLocs = new Location[4];
+		
+			for (int i = 0; i < 4; i++)
+			{
+				newLocs[i] = new Location(blocks[i].getLocation().getRow() + deltaRow,
+						 			  blocks[i].getLocation().getCol() + deltaCol);
+			
+				if (!grid.isValid(newLocs[i])) 
+					return false;
+			}
+		
+
+			Location[] temp = removeBlocks();
+		
+			if (areEmpty(grid, newLocs)) 
+			{
+				addToLocations(grid, newLocs);
+				return true;
+			}
+		
+			else
+			{
+				addToLocations(grid,temp);
+				return false;
+			}
+		
+		
+		
+	}
+	
+	public boolean rotate()
+	{
+			Location[] newLocs = new Location[4];
+			for (int i = 0; i < 4; i++)
+			{
+				Location currentLoc = blocks[0].getLocation();
+				Location otherLoc = blocks[i].getLocation();
+			
+				newLocs[i] = new Location(currentLoc.getRow() - currentLoc.getCol() + otherLoc.getCol(),
+						 			  currentLoc.getRow() + currentLoc.getCol() - otherLoc.getRow());
+			
+				if (!grid.isValid(newLocs[i])) 
+					return false;
+			}
+		
+			Location[] temp = removeBlocks();
+		
+			if (areEmpty(grid, newLocs)) 
+			{
+				addToLocations(grid, newLocs);
+				return true;
+			}
+		
+			else
+			{
+				addToLocations(grid,temp);
+				return false;
+			}
+		}
+	
+}

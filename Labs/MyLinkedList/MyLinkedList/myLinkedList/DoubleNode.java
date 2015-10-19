@@ -1,0 +1,106 @@
+package myLinkedList; //package declaration
+
+/*
+ * This class provides for the implementation of a doubly linked list node (part of a 
+ * linked list). Methods in this class enable the DoubleNode to change its value or any 
+ * of the pointers to whatever the user desires; they also enable the user to get the 
+ * value stored in a particular DoubleNode, or the next/previous DoubleNodes. 
+ */
+public class DoubleNode
+{
+	private Object value; //instance variable of what is stored in the DoubleNode
+	private DoubleNode previous; //pointer to the previous DoubleNode in the list
+	private DoubleNode next; //pointer to the next DoubleNode in the list
+
+	/**
+	 * This is the default constructor for DoubleNode, if the user has not specified
+	 * any of the instance fields. Everything is set to null.
+	 * @post creation of a new DoubleNode with all instance fields set to null
+	 */
+	public DoubleNode() 
+	{
+		value = null; //the user has not specified what is to be stored
+		previous = null; //the user has not specified what it is to be connected to
+		next = null; //the user has not specified what it is to be connected to
+	} //close default constructor
+	
+	/**
+	 * This is an overloaded constructor for a DoubleNode, given the value to be 
+	 * stored. The user inputs the value, and a new DoubleNode is created.
+	 * @param value what is to be stored in the DoubleNode
+	 * @post creation of a new DoubleNode with a specified value but everything else null.
+	 */
+	public DoubleNode(Object value) 
+	{
+		this.value = value; //sets the instance variable to value
+		previous = null; //user has not specified what the DoubleNode is to be connected to
+		next = null; //user has not specified what the DoubleNode is to be connected to
+	} //close one-argument constructor
+	
+	/**
+	 * This is another overloaded constructor for a DoubleNode, and this is where the user
+	 * knows exactly where he/she wants to place the DoubleNode. 
+	 * @param value what is to be stored in the DoubleNode
+	 * @param previous what is to be stored before the particular DoubleNode
+	 * @param next what is to be stored after the particular DoubleNode
+	 */
+	public DoubleNode(Object value, DoubleNode previous, DoubleNode next)
+	{
+		this.value = value; //sets the value stored in the DoubleNode
+		this.previous = previous; //sets instance variable previous 
+		this.next = next; //sets instance variable next
+	} //close three-argument constructor
+
+	/**
+	 * This returns the value stored in a particular DoubleNode. 
+	 * @return the value stored in a DoubleNode
+	 */
+	public Object getValue()
+	{
+		return value; //returns the value associated with the instance variable value
+	}
+
+	/**
+	 * This returns the linked list that is previous to the DoubleNode.
+	 * @return the DoubleNode that comes before the specified one.
+	 */
+	public DoubleNode getPrevious()
+	{
+		return previous; //return the instance variable previous
+	} //close getPrevious()
+
+	/**
+	 * This returns the linked list that comes after the DoubleNode. 
+	 * @return the DoubleNode that comes after the specified one. 
+	 */
+	public DoubleNode getNext()
+	{
+		return next; //returns the instance variable next
+	} //close getNext()
+
+	/**
+	 * This sets the value of a DoubleNode to whatever the user specifies.
+	 * @param v is the new value that the user wants to set in the DoubleNode
+	 * @post the DoubleNode's value is changed to v
+	 */
+	public void setValue(Object v)
+	{
+		value = v; //change the instance field value to v
+	} //close setValue() method
+
+	/**
+	 * This method sets the previous value of a DoubleNode to another
+	 * DoubleNode that the user specifies. 
+	 * @param p is the DoubleNode that will now come before the current DoubleNode.
+	 * @post the previous instance 
+	 */
+	public void setPrevious(DoubleNode p)
+	{
+		previous = p;
+	}
+
+	public void setNext(DoubleNode n)
+	{
+		next = n;
+	}
+}

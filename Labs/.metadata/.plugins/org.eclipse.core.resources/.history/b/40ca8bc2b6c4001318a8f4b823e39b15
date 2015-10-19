@@ -1,0 +1,15 @@
+public class HeapMain {
+
+	public static void main(String[] args) 
+	{
+		int[] intArray = new int[12];
+		for (int i = 1; i < 12; i++)
+		{
+			intArray[i] = (int) Math.random() * 100;
+		}
+		System.out.println(intArray.toString());
+		HeapDisplay disp = new HeapDisplay();
+
+	}
+
+}
